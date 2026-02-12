@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Peixinho Curioso - Livro Animado</title>
+    <title>O Peixinho Curioso - Livro de Capítulos</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
 
@@ -15,7 +15,6 @@
             --paper-color: #fdfaf0; 
         }
 
-        /* Efeito de Mar Animado no Fundo */
         body {
             margin: 0;
             background: linear-gradient(180deg, var(--water-light), var(--water-deep));
@@ -28,26 +27,19 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
-            position: relative;
         }
 
-        body::after {
-            content: "";
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.05) 20px, rgba(255, 255, 255, 0.05) 40px);
-            pointer-events: none;
-            animation: lightMove 10s linear infinite;
-        }
-
-        @keyframes oceanGradient {
-            0% { background-position: 50% 0%; }
-            50% { background-position: 50% 100%; }
-            100% { background-position: 50% 0%; }
-        }
-
-        @keyframes lightMove {
-            from { transform: translateX(-100px); }
-            to { transform: translateX(100px); }
+        /* Indicador de Capítulo */
+        #chapter-title {
+            position: absolute;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 20px;
+            border-radius: 15px;
+            color: var(--water-deep);
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 40;
         }
 
         .book-container {
@@ -59,30 +51,37 @@
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
             z-index: 5;
+            perspective: 1500px; /* Necessário para efeitos 3D */
         }
 
         .book-pages {
             width: 100%;
             height: 100%;
             background-color: var(--paper-color);
-            display: flex;
             position: relative;
             border-radius: 5px;
             overflow: hidden;
             box-shadow: inset 0 0 100px rgba(0,0,0,0.2);
         }
 
+        /* Efeito de Virada de Página */
+        .page-turn-animation {
+            animation: turnPage 0.8s ease-in-out forwards;
+        }
+
+        @keyframes turnPage {
+            0% { transform: rotateY(0deg); opacity: 1; }
+            50% { opacity: 0.5; transform: rotateY(-90deg) scale(0.95); }
+            100% { transform: rotateY(0deg); opacity: 1; }
+        }
+
         .book-spine {
             position: absolute;
             left: 50%; top: 0; bottom: 0;
-            width: 2px;
-            background: rgba(0,0,0,0.1);
-            z-index: 20;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            width: 4px;
+            background: linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0), rgba(0,0,0,0.2));
+            z-index: 25;
         }
 
         #ocean-stage {
@@ -93,141 +92,83 @@
             background-position: center;
             position: relative;
             overflow: hidden;
+            transition: filter 1s;
         }
 
-        /* Estilo do Balão de Fala */
+        /* Balão de Fala */
         #speech-bubble {
             position: absolute;
             background: white;
             border-radius: 20px;
-            padding: 10px 15px;
-            font-size: 1.1rem;
+            padding: 8px 12px;
+            font-size: 1rem;
             color: var(--text-color);
             border: 2px solid #555;
-            top: 25%;
-            left: 60px;
+            top: 30%;
+            left: 50px;
             z-index: 100;
-            display: none; /* Escondido por padrão */
-            animation: floatBubble 2s infinite ease-in-out;
-        }
-
-        #speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 20px;
-            border-width: 15px 15px 0 0;
-            border-style: solid;
-            border-color: white transparent transparent transparent;
-            display: block;
-            width: 0;
-        }
-
-        @keyframes floatBubble {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            display: none;
         }
 
         .alga-custom {
-            position: absolute;
-            bottom: -5px;
-            width: 60px;
+            position: absolute; bottom: -5px; width: 60px;
             animation: wave 3s infinite ease-in-out alternate;
-            transform-origin: bottom;
-            z-index: 5;
+            transform-origin: bottom; z-index: 5;
         }
 
-        @keyframes wave { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
-
         #peixinho {
-            width: 80px;
-            position: absolute;
-            top: 50%;
-            left: 10%;
-            transition: all 2s ease-in-out;
-            z-index: 10;
+            width: 80px; position: absolute; top: 50%; left: 10%;
+            transition: all 1.5s ease-in-out; z-index: 10;
         }
 
         .pais-container {
-            position: absolute;
-            top: 45%;
-            left: -250px;
-            transition: all 2s ease-in-out;
-            display: flex;
-            gap: 10px;
-            opacity: 0.9;
-            z-index: 9;
-        }
-
-        .pai-img { width: 110px; filter: hue-rotate(30deg); } 
-        .mae-img { width: 100px; filter: hue-rotate(-30deg); }
-
-        .bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            animation: rise 4s infinite ease-in;
-            z-index: 2;
-        }
-
-        @keyframes rise {
-            0% { transform: translateY(100%) scale(0.5); opacity: 0; }
-            100% { transform: translateY(-400px) scale(1.2); opacity: 0; }
+            position: absolute; top: 45%; left: -250px;
+            transition: all 1.5s ease-in-out; display: flex; gap: 10px; z-index: 9;
         }
 
         #narration-box {
-            width: 80%;
-            max-width: 700px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 20px;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 1.3rem;
-            color: var(--text-color);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            z-index: 30;
-            border: 2px solid white;
+            width: 80%; max-width: 700px;
+            background: white; padding: 15px; border-radius: 20px;
+            margin-top: 20px; text-align: center; font-size: 1.3rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 30;
         }
 
         #next-btn {
-            margin-top: 15px;
-            padding: 12px 35px;
-            font-size: 1.2rem;
-            background-color: var(--coral-btn);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 5px 0px #e08e9b;
-            z-index: 30;
+            margin-top: 15px; padding: 12px 35px;
+            background-color: var(--coral-btn); border: none;
+            border-radius: 50px; color: white; cursor: pointer;
+            box-shadow: 0 5px 0px #e08e9b; z-index: 30;
         }
+
+        @keyframes oceanGradient { 0%, 100% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } }
+        @keyframes wave { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+
     </style>
 </head>
 <body>
 
+    <div id="chapter-title">Capítulo 1: A Toca Animada</div>
+
     <div class="book-container">
-        <div class="book-pages">
+        <div class="book-pages" id="page-flip-element">
             <div class="book-spine"></div>
             <div id="ocean-stage">
                 <div id="speech-bubble">Agora não...</div>
-
                 <img src="alga.png" class="alga-custom" style="left: 8%;">
-                <img src="alga.png" class="alga-custom" style="left: 20%; width: 45px; animation-delay: 0.5s;">
-                <img src="alga.png" class="alga-custom" style="right: 15%; animation-delay: 1s;">
+                <img src="alga.png" class="alga-custom" style="right: 15%;">
 
                 <div id="pais" class="pais-container">
-                    <img src="peixinho.png" class="pai-img" alt="Papai">
-                    <img src="peixinho.png" class="mae-img" alt="Mamãe">
+                    <img src="peixinho.png" style="width:110px; filter: hue-rotate(30deg);">
+                    <img src="peixinho.png" style="width:100px; filter: hue-rotate(-30deg);">
                 </div>
                 
-                <img id="peixinho" src="peixinho.png" alt="Peixinho">
+                <img id="peixinho" src="peixinho.png">
             </div>
         </div>
     </div>
 
-    <div id="narration-box">Clique para começar a historinha!</div>
-    <button id="next-btn" onclick="nextStep()">Avançar ➔</button>
+    <div id="narration-box">O Peixinho queria muito brincar...</div>
+    <button id="next-btn" onclick="nextStep()">Virar Página ➔</button>
 
     <script>
         let step = 0;
@@ -236,36 +177,34 @@
         const text = document.getElementById('narration-box');
         const stage = document.getElementById('ocean-stage');
         const speechBubble = document.getElementById('speech-bubble');
+        const pageFlip = document.getElementById('page-flip-element');
+        const chapterTitle = document.getElementById('chapter-title');
 
-        setInterval(() => {
-            let b = document.createElement('div');
-            b.className = 'bubble';
-            b.style.left = Math.random() * 100 + '%';
-            b.style.bottom = "-20px";
-            b.style.width = b.style.height = Math.random() * 20 + 10 + 'px';
-            stage.appendChild(b);
-            setTimeout(() => b.remove(), 4000);
-        }, 1000);
+        const chapters = [
+            "Capítulo 1: A Toca Animada",
+            "Capítulo 2: A Grande Aventura",
+            "Capítulo 3: O Mar Profundo",
+            "Capítulo 4: O Resgate",
+            "Capítulo 5: Encontro Feliz"
+        ];
 
         const storySteps = [
             {
-                text: "O Peixinho queria muito brincar, mas o Papai e a Mamãe estavam cuidando da casa.",
                 action: () => {
                     pais.style.left = '30px';
                     peixinho.style.left = '250px';
-                    speechBubble.style.display = 'block'; // Mostra o balão
+                    speechBubble.style.display = 'block';
+                    stage.style.filter = "none";
                 }
             },
             {
-                text: "Então, ele decidiu explorar o oceano sozinho. 'Que aventura!', pensou ele.",
                 action: () => {
                     peixinho.style.left = '85%';
                     pais.style.left = '-300px'; 
-                    speechBubble.style.display = 'none'; // Esconde o balão
+                    speechBubble.style.display = 'none';
                 }
             },
             {
-                text: "Mas as águas ficaram fundas e ele se perdeu. O Peixinho começou a sentir saudades...",
                 action: () => {
                     stage.style.filter = "brightness(0.6) saturate(1.2)";
                     peixinho.style.top = '70%';
@@ -273,7 +212,6 @@
                 }
             },
             {
-                text: "De repente, lá longe, ele viu seus pais vindo procurá-lo!",
                 action: () => {
                     stage.style.filter = "none";
                     pais.style.left = '50%';
@@ -283,7 +221,6 @@
                 }
             },
             {
-                text: "Que felicidade! Agora eles brincam juntos e nunca mais o Peixinho se perdeu.",
                 action: () => {
                     peixinho.style.left = '40%';
                     peixinho.style.top = '40%';
@@ -293,17 +230,43 @@
             }
         ];
 
+        // Narrativas separadas
+        const narratives = [
+            "O Peixinho queria muito brincar, mas o Papai e a Mamãe estavam cuidando da casa.",
+            "Então, ele decidiu explorar o oceano sozinho. 'Que aventura!', pensou ele.",
+            "Mas as águas ficaram fundas e ele se perdeu. O Peixinho começou a sentir saudades...",
+            "De repente, lá longe, ele viu seus pais vindo procurá-lo!",
+            "Que felicidade! Agora eles brincam juntos e nunca mais o Peixinho se perdeu."
+        ];
+
         function nextStep() {
-            if(step < storySteps.length) {
-                const s = storySteps[step];
-                text.innerText = s.text;
-                s.action();
-                step++;
-                if(step === storySteps.length) document.getElementById('next-btn').innerText = "Recomeçar ↺";
-            } else {
+            step++;
+            if(step >= storySteps.length) {
                 location.reload();
+                return;
             }
+
+            // Inicia animação de virada de página
+            pageFlip.classList.remove('page-turn-animation');
+            void pageFlip.offsetWidth; // Reset animation
+            pageFlip.classList.add('page-turn-animation');
+
+            // Muda o conteúdo no meio da animação
+            setTimeout(() => {
+                chapterTitle.innerText = chapters[step];
+                text.innerText = narratives[step];
+                storySteps[step].action();
+                
+                if(step === storySteps.length - 1) {
+                    document.getElementById('next-btn').innerText = "Ler de novo ↺";
+                }
+            }, 400); // Metade do tempo da animação (0.8s)
         }
+
+        // Inicia o estado da primeira página
+        window.onload = () => {
+            storySteps[0].action();
+        };
     </script>
 </body>
 </html>
