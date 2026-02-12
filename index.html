@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Peixinho Curioso - História Animada</title>
+    <title>O Peixinho Curioso - Livro Animado</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
 
@@ -11,6 +11,7 @@
             --water-bg: #a2d2ff;
             --coral-btn: #ffafbd;
             --text-color: #444;
+            --paper-color: #fdfaf0; /* Cor de papel envelhecido leve */
         }
 
         body {
@@ -25,22 +26,66 @@
             overflow: hidden;
         }
 
-        /* Palco com seu cenário personalizado */
+        /* Estrutura do Livro Aberto */
+        .book-container {
+            position: relative;
+            width: 95vw;
+            max-width: 900px;
+            height: 65vh;
+            background-color: #8b4513; /* Cor da capa do livro */
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .book-pages {
+            width: 100%;
+            height: 100%;
+            background-color: var(--paper-color);
+            display: flex;
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+            /* Sombra central para simular a dobra do livro */
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.2);
+        }
+
+        /* Linha central da dobra do livro */
+        .book-spine {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(0,0,0,0.1);
+            z-index: 20;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        /* Palco ajustado para ficar "dentro" do livro */
         #ocean-stage {
-            width: 90vw;
-            height: 60vh;
-            max-width: 800px;
+            width: 100%;
+            height: 100%;
             background-image: url('cenario.png'); 
             background-size: cover;
             background-position: center;
-            border: 8px solid white;
-            border-radius: 40px;
             position: relative;
-            box-shadow: 0 20px 0px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        /* Suas algas personalizadas */
+        /* Degradê para simular curvatura nas bordas internas */
+        #ocean-stage::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+            z-index: 15;
+        }
+
         .alga-custom {
             position: absolute;
             bottom: -5px;
@@ -56,9 +101,8 @@
             to { transform: rotate(4deg); } 
         }
 
-        /* O Peixinho principal */
         #peixinho {
-            width: 80px; /* Ajuste o tamanho se necessário */
+            width: 80px;
             position: absolute;
             top: 50%;
             left: 10%;
@@ -66,7 +110,6 @@
             z-index: 10;
         }
 
-        /* Os Pais (Usando a mesma imagem do peixinho, mas maior) */
         .pais-container {
             position: absolute;
             top: 45%;
@@ -78,10 +121,9 @@
             z-index: 9;
         }
 
-        .pai-img { width: 110px; filter: hue-rotate(30deg); } /* Diferencia um pouco a cor dos pais */
+        .pai-img { width: 110px; filter: hue-rotate(30deg); } 
         .mae-img { width: 100px; filter: hue-rotate(-30deg); }
 
-        /* Bolhas */
         .bubble {
             position: absolute;
             background: rgba(255, 255, 255, 0.4);
@@ -99,20 +141,20 @@
             width: 80%;
             max-width: 700px;
             background: white;
-            padding: 20px;
-            border-radius: 25px;
-            margin-top: 25px;
+            padding: 15px;
+            border-radius: 20px;
+            margin-top: 20px;
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--text-color);
-            box-shadow: 0 8px 0px #cbd5e0;
-            min-height: 70px;
+            box-shadow: 0 5px 0px #cbd5e0;
+            z-index: 30;
         }
 
         #next-btn {
-            margin-top: 20px;
-            padding: 15px 40px;
-            font-size: 1.3rem;
+            margin-top: 15px;
+            padding: 12px 35px;
+            font-size: 1.2rem;
             font-family: 'Bubblegum Sans', cursive;
             background-color: var(--coral-btn);
             border: none;
@@ -121,6 +163,7 @@
             cursor: pointer;
             box-shadow: 0 5px 0px #e08e9b;
             transition: 0.2s;
+            z-index: 30;
         }
 
         #next-btn:active { transform: translateY(3px); box-shadow: 0 2px 0px #e08e9b; }
@@ -129,17 +172,22 @@
 </head>
 <body>
 
-    <div id="ocean-stage">
-        <img src="alga.png" class="alga-custom" style="left: 8%;">
-        <img src="alga.png" class="alga-custom" style="left: 20%; width: 45px; animation-delay: 0.5s;">
-        <img src="alga.png" class="alga-custom" style="right: 15%; animation-delay: 1s;">
+    <div class="book-container">
+        <div class="book-pages">
+            <div class="book-spine"></div>
+            <div id="ocean-stage">
+                <img src="alga.png" class="alga-custom" style="left: 8%;">
+                <img src="alga.png" class="alga-custom" style="left: 20%; width: 45px; animation-delay: 0.5s;">
+                <img src="alga.png" class="alga-custom" style="right: 15%; animation-delay: 1s;">
 
-        <div id="pais" class="pais-container">
-            <img src="peixinho.png" class="pai-img" alt="Papai">
-            <img src="peixinho.png" class="mae-img" alt="Mamãe">
+                <div id="pais" class="pais-container">
+                    <img src="peixinho.png" class="pai-img" alt="Papai">
+                    <img src="peixinho.png" class="mae-img" alt="Mamãe">
+                </div>
+                
+                <img id="peixinho" src="peixinho.png" alt="Peixinho">
+            </div>
         </div>
-        
-        <img id="peixinho" src="peixinho.png" alt="Peixinho">
     </div>
 
     <div id="narration-box">
@@ -155,7 +203,6 @@
         const text = document.getElementById('narration-box');
         const stage = document.getElementById('ocean-stage');
 
-        // Gerador de bolhas
         setInterval(() => {
             let b = document.createElement('div');
             b.className = 'bubble';
@@ -186,7 +233,7 @@
                 action: () => {
                     stage.style.filter = "brightness(0.6) saturate(1.2)";
                     peixinho.style.top = '70%';
-                    peixinho.style.transform = 'scaleX(-1)'; // Vira para o outro lado
+                    peixinho.style.transform = 'scaleX(-1)'; 
                 }
             },
             {
