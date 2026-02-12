@@ -3,312 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Aventura do Peixinho Curioso</title>
+    <title>O Peixinho Curioso - História Animada</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Open+Sans:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
 
         :root {
-            --sea-blue-light: #87CEEB; /* Azul céu, para um mar claro */
-            --sea-blue-dark: #4682B4; /* Azul aço, para profundidade */
-            --coral-pink: #FF69B4;
-            --bubble-white: #E0FFFF;
-            --text-dark: #333;
-            --font-display: 'Luckiest Guy', cursive;
-            --font-body: 'Open Sans', sans-serif;
+            --water-bg: #a2d2ff;
+            --coral: #ffafbd;
+            --sand: #fef9e7;
+            --fish-orange: #ff9f43;
         }
 
         body {
-            background: linear-gradient(to bottom, var(--sea-blue-light), var(--sea-blue-dark));
-            color: var(--text-dark);
-            font-family: var(--font-body);
             margin: 0;
+            background-color: var(--water-bg);
+            font-family: 'Bubblegum Sans', cursive;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow: hidden; /* Para não ter scroll se a tela for pequena */
-        }
-
-        /* Contêiner Principal do Jogo */
-        #game-viewport {
-            width: 95%;
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.9); /* Fundo branco semi-transparente */
-            border-radius: 20px;
+            justify-content: center;
+            height: 100vh;
             overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Cenário Lúdico */
+        #ocean-stage {
+            width: 90vw;
+            height: 60vh;
+            max-width: 800px;
+            background: linear-gradient(180deg, #caf0f8 0%, #90e0ef 100%);
+            border: 8px solid white;
+            border-radius: 40px;
             position: relative;
-            padding-bottom: 20px; /* Espaço para opções no mobile */
+            box-shadow: 0 20px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
 
-        /* Título da História */
-        h1 {
-            font-family: var(--font-display);
-            color: var(--coral-pink);
-            text-align: center;
-            font-size: 2.5rem;
-            text-shadow: 3px 3px 0px var(--sea-blue-dark);
-            margin-top: 20px;
-        }
-
-        /* Área da Imagem da Cena */
-        #scene-display {
-            width: 100%;
-            height: 300px;
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            transition: background-image 1s ease-in-out; /* Transição suave para imagem */
-        }
-
-        /* Balões de Ar para o Texto */
-        #story-bubble {
-            background: var(--bubble-white);
-            border-radius: 50% 50% 50% 0%; /* Forma de balão de fala */
-            padding: 20px 30px;
-            margin: 20px;
-            max-width: 70%;
-            text-align: center;
-            font-size: 1.2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            position: relative;
-            animation: bounceIn 1s forwards; /* Animação de entrada */
-        }
-
-        @keyframes bounceIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            70% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
-        /* Contêiner das Opções */
-        .choices-grid {
-            padding: 0 30px;
-            display: grid;
-            grid-template-columns: 1fr; /* Uma coluna no mobile */
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        button {
-            background: var(--coral-pink);
-            border: none;
-            color: white;
-            padding: 15px 20px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-family: var(--font-display);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 0px #C70039; /* Efeito 3D sutil */
-        }
-
-        button:hover {
-            background: #FF4F8D;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0px #C70039;
-        }
-
-        /* Animação para o peixinho ou elementos interativos */
-        .swimming-fish {
+        /* Elementos Animados */
+        .bubble {
             position: absolute;
-            bottom: 20px;
-            left: 5%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: rise 4s infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(100%) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-200px) scale(1.2); opacity: 0; }
+        }
+
+        #peixinho {
             width: 80px;
-            animation: swimLeftRight 5s infinite alternate ease-in-out;
-            pointer-events: none; /* Garante que não bloqueie cliques na imagem de fundo */
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transition: all 2s ease-in-out;
+            z-index: 10;
         }
 
-        @keyframes swimLeftRight {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(80px); }
+        #pais {
+            width: 120px;
+            position: absolute;
+            top: 45%;
+            left: -200px; /* Começa fora da tela */
+            transition: all 2s ease-in-out;
+            opacity: 0.7;
         }
 
-        /* Media Queries para Responsividade */
-        @media (min-width: 600px) {
-            .choices-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 2 ou mais colunas */
-            }
-            #story-bubble { max-width: 60%; font-size: 1.3rem; }
-            h1 { font-size: 3rem; }
+        /* Legenda Narrativa */
+        #narration-box {
+            width: 80%;
+            max-width: 700px;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #444;
+            box-shadow: 0 10px 0px #ddd;
+            min-height: 60px;
+            position: relative;
         }
+
+        /* Botão Próximo (Lúdico) */
+        #next-btn {
+            margin-top: 25px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: 'Bubblegum Sans', cursive;
+            background-color: var(--coral);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 0px #e08e9b;
+            transition: transform 0.2s;
+        }
+
+        #next-btn:active { transform: translateY(4px); box-shadow: 0 1px 0px #e08e9b; }
+
+        /* Decoração de Fundo */
+        .alga {
+            position: absolute;
+            bottom: 0;
+            width: 40px;
+            height: 100px;
+            background: #74c69d;
+            border-radius: 20px 20px 0 0;
+            animation: wave 3s infinite ease-in-out alternate;
+            transform-origin: bottom;
+        }
+
+        @keyframes wave { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
     </style>
 </head>
 <body>
 
-    <div id="game-viewport">
-        <h1>A Aventura do Peixinho Curioso!</h1>
-        <div id="scene-display">
-            <img id="peixinho-animado" src="peixinho.png" class="swimming-fish">
-        </div>
+    <div id="ocean-stage">
+        <div class="alga" style="left: 10%; height: 80px; background: #95d5b2;"></div>
+        <div class="alga" style="left: 85%; height: 120px;"></div>
         
-        <div id="story-bubble"></div>
-        <div id="choices" class="choices-grid"></div>
+        <img id="pais" src="https://cdn-icons-png.flaticon.com/512/2271/2271068.png" alt="Pais">
+        <img id="peixinho" src="https://cdn-icons-png.flaticon.com/512/2271/2271062.png" alt="Peixinho">
+        
+        </div>
+
+    <div id="narration-box">
+        Clique no botão para começar a história do Peixinho!
     </div>
 
-    <audio id="bg-music" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio> <audio id="sfx-bubble" src="https://freesound.org/data/previews/256/256037_4798305-lq.mp3"></audio> <script>
-        // --- Dados da História ---
-        const story = {
-            'inicio': {
-                text: "No fundo do mar, vivia Peixinho com seus pais. Ele amava brincar de esconde-esconde, mas hoje, papai e mamãe estavam muito ocupados construindo uma nova toca.",
-                image: "https://images.unsplash.com/photo-1543852784-a15d74261730?auto=format&fit=crop&w=800&q=80", // Peixinhos e corais
-                audio: "bg_calm_sea.mp3", // Exemplo
-                options: [
-                    { text: "Pedir para brincar", next: 'pedir_brincar' },
-                    { text: "Nadar sozinho um pouco", next: 'nadar_sozinho' }
-                ]
-            },
-            'pedir_brincar': {
-                text: "Peixinho perguntou: 'Posso brincar?' Mamãe Peixe sorriu, 'Mais tarde, meu amor, precisamos terminar a toca!' Peixinho ficou um pouco triste.",
-                image: "https://images.unsplash.com/photo-1606553258597-21783f9b2a74?auto=format&fit=crop&w=800&q=80", // Família de peixes, ocupados
-                options: [
-                    { text: "Esperar pacientemente", next: 'esperar_pais' },
-                    { text: "Ir nadar em segredo", next: 'nadar_sozinho' }
-                ]
-            },
-            'esperar_pais': {
-                text: "Peixinho decidiu esperar. Ele observou os pais e logo a toca estava pronta! 'Agora podemos brincar!' disseram eles. A família nadou feliz! FIM.",
-                image: "https://images.unsplash.com/photo-1582098059883-7c8702316e6d?auto=format&fit=crop&w=800&q=80", // Peixinhos brincando felizes
-                options: [
-                    { text: "Recomeçar", next: 'inicio' }
-                ]
-            },
-            'nadar_sozinho': {
-                text: "Com um pequeno suspiro, Peixinho decidiu nadar um pouco sozinho. 'Só um pouquinho', pensou ele, enquanto se afastava da toca. Ele encontrou uma estrela-do-mar brilhante!",
-                image: "https://images.unsplash.com/photo-1583561343765-a888c3a504b7?auto=format&fit=crop&w=800&q=80", // Peixinho nadando perto de uma estrela-do-mar
-                options: [
-                    { text: "Seguir a estrela-do-mar", next: 'seguir_estrela' },
-                    { text: "Voltar para a toca", next: 'voltar_toca' }
-                ]
-            },
-            'seguir_estrela': {
-                text: "A estrela-do-mar o levou por um campo de algas coloridas, mas de repente... Peixinho não reconhecia mais o caminho! Ele estava perdido e um pouco assustado.",
-                image: "https://images.unsplash.com/photo-1543852784-a15d74261730?auto=format&fit=crop&w=800&q=80", // Campo de algas com peixinho confuso
-                options: [
-                    { text: "Chamar pelos pais", next: 'pais_procuram' },
-                    { text: "Procurar um lugar para se esconder", next: 'esconder' }
-                ]
-            },
-            'voltar_toca': {
-                text: "Peixinho pensou melhor e decidiu voltar. Ufa! Ele encontrou a toca e seus pais o abraçaram forte! 'Que bom que você voltou!' disseram eles. FIM.",
-                image: "https://images.unsplash.com/photo-1582098059883-7c8702316e6d?auto=format&fit=crop&w=800&q=80", // Peixinho com os pais na toca
-                options: [
-                    { text: "Recomeçar", next: 'inicio' }
-                ]
-            },
-            'pais_procuram': {
-                text: "Enquanto Peixinho estava perdido, Mamãe e Papai Peixe terminaram a toca e foram procurá-lo. 'Onde estará nosso Peixinho?' perguntava a Mamãe preocupada.",
-                image: "https://images.unsplash.com/photo-1510414138138-0382dfa54823?auto=format&fit=crop&w=800&q=80", // Pais procurando o peixinho (com corais ao fundo)
-                audio: "bg_worry.mp3", // Exemplo de áudio de preocupação
-                options: [
-                    { text: "Esperar que eles o encontrem", next: 'reuniao' }
-                ]
-            },
-            'esconder': {
-                text: "Peixinho se escondeu atrás de uma pedra, tremendo um pouco. Logo ouviu as vozes dos pais o chamando. 'Peixinho, onde você está?'",
-                image: "https://images.unsplash.com/photo-1507425121288-51f6186b4cf4?auto=format&fit=crop&w=800&q=80", // Peixinho escondido atrás de uma pedra
-                options: [
-                    { text: "Sair do esconderijo", next: 'reuniao' }
-                ]
-            },
-            'reuniao': {
-                text: "De repente, Peixinho viu seus pais! Eles se abraçaram forte, cheios de alegria. 'Nunca mais nade tão longe sozinho, meu amor', disse o Papai. Depois, eles brincaram juntos por todo o caminho de volta para casa! FIM.",
-                image: "https://images.unsplash.com/photo-1582098059883-7c8702316e6d?auto=format&fit=crop&w=800&q=80", // Peixinhos reunidos e brincando
-                options: [
-                    { text: "Recomeçar a aventura", next: 'inicio' }
-                ]
-            }
-        };
+    <button id="next-btn" onclick="nextStep()">Começar Aventura ➔</button>
 
-        // --- Elementos do DOM ---
-        const sceneDisplay = document.getElementById('scene-display');
-        const storyBubble = document.getElementById('story-bubble');
-        const choicesGrid = document.getElementById('choices');
-        const bgMusic = document.getElementById('bg-music');
-        const sfxBubble = document.getElementById('sfx-bubble');
-        const peixinhoAnimado = document.getElementById('peixinho-animado');
+    <script>
+        let step = 0;
+        const peixinho = document.getElementById('peixinho');
+        const pais = document.getElementById('pais');
+        const text = document.getElementById('narration-box');
+        const stage = document.getElementById('ocean-stage');
 
-        let currentSceneId = 'inicio';
-
-        // --- Funções da Engine ---
-        function playBubbleSound() {
-            sfxBubble.currentTime = 0; // Reinicia o som se já estiver tocando
-            sfxBubble.play().catch(e => console.log("Áudio de bolha aguardando interação."));
+        // Criar bolhas aleatórias
+        for(let i=0; i<10; i++) {
+            let b = document.createElement('div');
+            b.className = 'bubble';
+            b.style.left = Math.random() * 100 + '%';
+            b.style.width = b.style.height = Math.random() * 20 + 10 + 'px';
+            b.style.animationDelay = Math.random() * 4 + 's';
+            stage.appendChild(b);
         }
 
-        function playBgMusic(audioFile) {
-            // Se já tem música e é a mesma, não faz nada
-            if (bgMusic.src.includes(audioFile) && !bgMusic.paused) {
-                return;
+        const storySteps = [
+            {
+                text: "Peixinho vivia com seus pais, mas eles estavam muito ocupados limpando a toca...",
+                action: () => {
+                    pais.style.left = '50px';
+                    peixinho.style.left = '200px';
+                }
+            },
+            {
+                text: "O Peixinho decidiu nadar sozinho em busca de novas aventuras!",
+                action: () => {
+                    peixinho.style.left = '80%';
+                    pais.style.opacity = '0';
+                    stage.style.background = 'linear-gradient(180deg, #48cae4 0%, #0077b6 100%)';
+                }
+            },
+            {
+                text: "Oh não! Ele nadou tanto que acabou se perdendo nas algas profundas...",
+                action: () => {
+                    peixinho.style.top = '70%';
+                    peixinho.style.filter = 'grayscale(50%)';
+                    // Tremedeira de medo
+                    peixinho.animate([
+                        { transform: 'translateX(0)' },
+                        { transform: 'translateX(5px)' }
+                    ], { duration: 100, iterations: Infinity });
+                }
+            },
+            {
+                text: "Mas olhe! Papai e Mamãe Peixe vieram nadando rápido para encontrá-lo!",
+                action: () => {
+                    pais.style.opacity = '1';
+                    pais.style.left = '60%';
+                    pais.style.top = '65%';
+                }
+            },
+            {
+                text: "Eles se encontraram! Agora, todos brincam juntos pelo caminho de volta.",
+                action: () => {
+                    peixinho.style.filter = 'none';
+                    peixinho.style.left = '45%';
+                    peixinho.style.top = '45%';
+                    pais.style.left = '35%';
+                    stage.style.background = 'linear-gradient(180deg, #caf0f8 0%, #90e0ef 100%)';
+                    // Animação de alegria (pulo)
+                    peixinho.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-30px)' }], { duration: 500, iterations: 4 });
+                }
             }
-            // Se tem música diferente ou não tem, troca e tenta tocar
-            if (audioFile) {
-                bgMusic.src = audioFile;
-                bgMusic.play().catch(e => console.log("Música de fundo aguardando interação."));
+        ];
+
+        function nextStep() {
+            if(step < storySteps.length) {
+                const s = storySteps[step];
+                text.innerText = s.text;
+                s.action();
+                step++;
+                if(step === storySteps.length) {
+                    document.getElementById('next-btn').innerText = "Ver de novo ↺";
+                }
             } else {
-                bgMusic.pause(); // Pausa se não houver arquivo especificado
+                location.reload(); // Reinicia
             }
         }
-
-        function renderScene(sceneId) {
-            const scene = story[sceneId];
-            if (!scene) {
-                console.error("Cena não encontrada:", sceneId);
-                return;
-            }
-
-            // Atualiza a imagem de fundo da cena
-            sceneDisplay.style.backgroundImage = `url('${scene.image}')`;
-
-            // Atualiza o texto do balão
-            storyBubble.innerHTML = scene.text;
-            // Reinicia a animação do balão
-            storyBubble.classList.remove('bounceIn');
-            void storyBubble.offsetWidth; // Trigger reflow
-            storyBubble.classList.add('bounceIn');
-
-            // Limpa as opções anteriores
-            choicesGrid.innerHTML = '';
-
-            // Cria os botões de opções
-            scene.options.forEach(option => {
-                const button = document.createElement('button');
-                button.innerText = option.text;
-                button.onclick = () => {
-                    playBubbleSound();
-                    renderScene(option.next);
-                };
-                choicesGrid.appendChild(button);
-            });
-
-            // Atualiza a música de fundo
-            // playBgMusic(scene.audio); // Descomente para ativar a música de fundo, lembrando da restrição de autoplay
-            
-            // Ajusta a animação do peixinho (opcional, pode ter lógica mais complexa)
-            if (sceneId === 'nadar_sozinho' || sceneId === 'seguir_estrela') {
-                peixinhoAnimado.style.animation = 'swimLeftRight 5s infinite alternate ease-in-out';
-            } else {
-                peixinhoAnimado.style.animation = 'none'; // Peixinho para em outras cenas
-            }
-        }
-
-        // --- Inicialização da História ---
-        window.onload = () => {
-            renderScene('inicio');
-            // Tenta tocar a música de fundo (será bloqueada até o primeiro clique)
-            // bgMusic.play().catch(e => console.log("Música de fundo aguardando interação do usuário."));
-        };
-
-        // --- Adiciona um listener para a primeira interação para liberar o áudio ---
-        document.addEventListener('click', function firstInteraction() {
-            bgMusic.play().catch(e => console.log("Música de fundo iniciada após interação."));
-            // Remover o listener para que não tente tocar várias vezes
-            document.removeEventListener('click', firstInteraction);
-        });
-
     </script>
 </body>
 </html>
