@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Peixinho Curioso - Livro Interativo</title>
+    <title>O Peixinho Curioso - Livro Animado</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
 
         :root {
-            --paper-color: #fdfaf0;
-            --cover-color: #5d2e0a;
-            --width: 400px; /* Largura de UMA página */
-            --height: 550px; /* Altura do livro */
+            --book-width: 450px; /* Largura de cada página */
+            --book-height: 600px;
+            --paper: #fdfaf0;
         }
 
         body {
@@ -22,32 +21,32 @@
             align-items: center;
             background: radial-gradient(circle, #90e0ef 0%, #0077b6 100%);
             font-family: 'Bubblegum Sans', cursive;
+            overflow: hidden;
         }
 
         /* O Livro */
         .book {
-            width: calc(var(--width) * 2);
-            height: var(--height);
+            width: calc(var(--book-width) * 2);
+            height: var(--book-height);
             position: relative;
-            perspective: 1500px;
-            transition: transform 0.5s;
+            perspective: 2000px;
         }
 
-        /* As Folhas */
+        /* Folhas do Livro */
         .page {
-            width: var(--width);
-            height: var(--height);
+            width: var(--book-width);
+            height: var(--book-height);
             position: absolute;
             top: 0;
             right: 0;
             transform-origin: left;
-            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
             z-index: 1;
             cursor: pointer;
         }
 
-        /* Lado da Frente da Folha */
+        /* Lados da página (Frente e Verso) */
         .front, .back {
             position: absolute;
             width: 100%;
@@ -55,165 +54,169 @@
             top: 0;
             left: 0;
             backface-visibility: hidden;
-            background-color: var(--paper-color);
-            padding: 30px;
-            box-sizing: border-box;
+            background-image: url('cenario.png'); /* Seu cenário em todas as páginas */
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 3px 0px 20px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
         }
 
-        /* Lado de Trás da Folha */
         .back {
             transform: rotateY(180deg);
-            background-color: #f9f4e8;
+            background-blend-mode: multiply;
+            background-color: #eee; /* Verso levemente mais escuro */
         }
 
-        /* Imagem e Texto */
-        .page img {
-            width: 100%;
-            max-height: 250px;
-            object-fit: contain;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-
+        /* Elementos dentro do livro */
         .page p {
-            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.4rem;
             color: #333;
             text-align: center;
-            line-height: 1.4;
+            margin: 20px;
+            max-width: 80%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        /* Estado: Página Virada */
-        .page.flipped {
-            transform: rotateY(-180deg);
-            z-index: 2;
+        .img-peixe {
+            width: 120px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+            animation: floating 3s infinite ease-in-out;
         }
 
-        /* Estilo da Capa */
-        .cover {
-            background-color: var(--cover-color) !important;
-            color: white;
-            border-radius: 0 10px 10px 0 !important;
+        /* Alga animada no canto da página */
+        .alga-book {
+            position: absolute;
+            bottom: 0;
+            right: 10px;
+            width: 60px;
+            transform-origin: bottom;
+            animation: wave 3s infinite alternate ease-in-out;
         }
 
-        .cover h1 { font-size: 3rem; text-shadow: 2px 2px #000; }
-
-        /* Balão de fala */
+        /* Balão de Fala */
         .balao {
             background: white;
-            border: 2px solid #000;
-            border-radius: 15px;
-            padding: 5px 15px;
+            border: 2px solid #444;
+            border-radius: 20px;
+            padding: 10px 15px;
             position: absolute;
-            top: 10%;
+            top: 15%;
             left: 20%;
-            color: black;
             font-size: 1.2rem;
         }
 
-        /* Bolhas decorativas no fundo do mar */
-        .bg-bubbles {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
+        /* Efeito de Virada */
+        .page.flipped {
+            transform: rotateY(-180deg);
         }
+
+        /* Bolhas pelo cenário */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            bottom: -20px;
+            animation: rise 5s infinite ease-in;
+        }
+
+        /* Animações */
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes wave { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+        @keyframes rise { to { transform: translateY(-700px); opacity: 0; } }
+
     </style>
 </head>
 <body>
 
-    <div class="bg-bubbles" id="bubbles"></div>
-
-    <div class="book" id="book">
+    <div class="book">
         
-        <div class="page" style="z-index: 5;" onclick="flip(this)">
-            <div class="front cover">
-                <h1>O Peixinho Curioso</h1>
-                <p>Clique para abrir ➔</p>
-            </div>
-            <div class="back">
-                <p>O Peixinho vivia no fundo do mar...</p>
-                <img src="peixinho.png" alt="Peixinho">
-            </div>
-        </div>
-
         <div class="page" style="z-index: 4;" onclick="flip(this)">
-            <div class="front">
-                <div class="balao">Agora não...</div>
-                <img src="peixinho.png" style="filter: hue-rotate(50deg);">
-                <p>Papai e Mamãe estavam cuidando da toca.</p>
+            <div class="front" style="background-color: #5d2e0a; background-image: none;">
+                <h1 style="color: white; font-size: 3rem; text-align: center;">O Peixinho Curioso</h1>
+                <p>Toque para abrir ➔</p>
             </div>
             <div class="back">
-                <p>Peixinho decidiu nadar para longe...</p>
-                <img src="alga.png">
+                <img src="peixinho.png" class="img-peixe">
+                <p>O Peixinho amava sua casa colorida no oceano.</p>
+                <img src="alga.png" class="alga-book">
             </div>
         </div>
 
         <div class="page" style="z-index: 3;" onclick="flip(this)">
-            <div class="front" style="background-image: url('cenario.png'); background-size: cover;">
-                <p style="background: white; padding: 10px; border-radius: 10px;">Ele se perdeu no mar azul profundo!</p>
+            <div class="front">
+                <div class="balao">Agora não...</div>
+                <img src="peixinho.png" class="img-peixe" style="filter: hue-rotate(50deg);">
+                <p>Mas seus pais estavam muito ocupados agora.</p>
             </div>
             <div class="back">
-                <p>Mas seus pais logo apareceram para resgatá-lo.</p>
-                <img src="peixinho.png">
+                <p>Ele decidiu nadar para bem longe sozinho!</p>
+                <img src="peixinho.png" class="img-peixe" style="transform: scaleX(-1);">
             </div>
         </div>
 
         <div class="page" style="z-index: 2;" onclick="flip(this)">
+            <div class="front" style="filter: brightness(0.7);">
+                <p>De repente, tudo ficou escuro. Peixinho estava perdido!</p>
+            </div>
+            <div class="back">
+                <img src="peixinho.png" class="img-peixe">
+                <p>Papai e Mamãe chegaram depressa para ajudá-lo.</p>
+            </div>
+        </div>
+
+        <div class="page" style="z-index: 1;" onclick="flip(this)">
             <div class="front">
                 <h1>FIM!</h1>
-                <p>Agora eles brincam juntos todos os dias.</p>
-                <img src="peixinho.png">
+                <p>Eles brincaram juntos por todo o caminho.</p>
+                <img src="peixinho.png" class="img-peixe">
             </div>
-            <div class="back cover">
-                <h1>Voltar ao início?</h1>
+            <div class="back" style="background-color: #5d2e0a; background-image: none;">
+                <h2 style="color: white;">FIM DA AVENTURA</h2>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Função para virar as páginas
-        function flip(element) {
-            element.classList.toggle('flipped');
+        // Função para virar a página
+        function flip(el) {
+            el.classList.toggle('flipped');
             
-            // Ajuste de Z-Index para que as páginas não fiquem por baixo
-            if (element.classList.contains('flipped')) {
-                setTimeout(() => {
-                    element.style.zIndex = 10;
-                }, 500);
+            // Gerencia o Z-Index para as páginas não se sobreporem errado ao voltar
+            if (el.classList.contains('flipped')) {
+                setTimeout(() => { el.style.zIndex = 10 + stepCounter(); }, 500);
             } else {
-                setTimeout(() => {
-                    // Retorna ao z-index original baseado na ordem (precisa ser manual aqui)
-                    if (element.contains(document.querySelector('h1'))) element.style.zIndex = 5;
-                }, 500);
+                setTimeout(() => { el.style.zIndex = el.getAttribute('data-init-z'); }, 500);
             }
         }
 
-        // Criar bolhas no fundo do mar
-        const bubblesContainer = document.getElementById('bubbles');
-        for (let i = 0; i < 20; i++) {
-            const bubble = document.createElement('div');
-            bubble.style.position = 'absolute';
-            bubble.style.background = 'rgba(255,255,255,0.3)';
-            bubble.style.borderRadius = '50%';
-            bubble.style.width = bubble.style.height = Math.random() * 20 + 10 + 'px';
-            bubble.style.left = Math.random() * 100 + 'vw';
-            bubble.style.bottom = '-50px';
-            bubble.style.animation = `rise ${Math.random() * 5 + 5}s infinite linear`;
-            bubblesContainer.appendChild(bubble);
-        }
+        let c = 0;
+        function stepCounter() { return c++; }
 
-        // Estilo da animação das bolhas
-        const style = document.createElement('style');
-        style.innerHTML = `@keyframes rise { to { transform: translateY(-110vh); opacity: 0; } }`;
-        document.head.appendChild(style);
+        // Adiciona bolhas dinamicamente em cada página
+        const stages = document.querySelectorAll('.front, .back');
+        stages.forEach(s => {
+            for(let i=0; i<5; i++) {
+                let b = document.createElement('div');
+                b.className = 'bubble';
+                b.style.left = Math.random() * 90 + '%';
+                b.style.width = b.style.height = Math.random() * 15 + 5 + 'px';
+                b.style.animationDelay = Math.random() * 5 + 's';
+                s.appendChild(b);
+            }
+        });
+
+        // Salva os Z-index iniciais
+        document.querySelectorAll('.page').forEach(p => {
+            p.setAttribute('data-init-z', p.style.zIndex);
+        });
     </script>
 </body>
 </html>
