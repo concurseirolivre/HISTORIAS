@@ -10,8 +10,7 @@
         :root {
             --water-bg: #a2d2ff;
             --coral: #ffafbd;
-            --sand: #fef9e7;
-            --fish-orange: #ff9f43;
+            --text-color: #444;
         }
 
         body {
@@ -26,12 +25,14 @@
             overflow: hidden;
         }
 
-        /* Cenário Lúdico */
+        /* Palco com sua imagem de cenário personalizada */
         #ocean-stage {
             width: 90vw;
             height: 60vh;
             max-width: 800px;
-            background: linear-gradient(180deg, #caf0f8 0%, #90e0ef 100%);
+            background-image: url('cenario.png'); /* Seu arquivo do GitHub */
+            background-size: cover;
+            background-position: center;
             border: 8px solid white;
             border-radius: 40px;
             position: relative;
@@ -39,18 +40,34 @@
             overflow: hidden;
         }
 
-        /* Elementos Animados */
+        /* Algas usando seu arquivo alga.png */
+        .alga-custom {
+            position: absolute;
+            bottom: -5px;
+            width: 60px; /* Ajuste conforme o tamanho da sua arte */
+            height: auto;
+            animation: wave 3s infinite ease-in-out alternate;
+            transform-origin: bottom;
+            z-index: 5;
+        }
+
+        @keyframes wave { 
+            from { transform: rotate(-3deg) scale(1); } 
+            to { transform: rotate(3deg) scale(1.05); } 
+        }
+
+        /* Bolhas */
         .bubble {
             position: absolute;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
             animation: rise 4s infinite ease-in;
+            z-index: 2;
         }
 
         @keyframes rise {
             0% { transform: translateY(100%) scale(0.5); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(-200px) scale(1.2); opacity: 0; }
+            100% { transform: translateY(-300px) scale(1.2); opacity: 0; }
         }
 
         #peixinho {
@@ -66,31 +83,29 @@
             width: 120px;
             position: absolute;
             top: 45%;
-            left: -200px; /* Começa fora da tela */
+            left: -200px;
             transition: all 2s ease-in-out;
-            opacity: 0.7;
+            opacity: 0.8;
+            z-index: 9;
         }
 
-        /* Legenda Narrativa */
         #narration-box {
             width: 80%;
             max-width: 700px;
             background: white;
             padding: 20px;
-            border-radius: 20px;
-            margin-top: 30px;
+            border-radius: 25px;
+            margin-top: 25px;
             text-align: center;
-            font-size: 1.5rem;
-            color: #444;
-            box-shadow: 0 10px 0px #ddd;
+            font-size: 1.4rem;
+            color: var(--text-color);
+            box-shadow: 0 8px 0px #cbd5e0;
             min-height: 60px;
-            position: relative;
         }
 
-        /* Botão Próximo (Lúdico) */
         #next-btn {
-            margin-top: 25px;
-            padding: 15px 40px;
+            margin-top: 20px;
+            padding: 12px 35px;
             font-size: 1.2rem;
             font-family: 'Bubblegum Sans', cursive;
             background-color: var(--coral);
@@ -99,43 +114,30 @@
             color: white;
             cursor: pointer;
             box-shadow: 0 5px 0px #e08e9b;
-            transition: transform 0.2s;
+            transition: 0.2s;
         }
 
-        #next-btn:active { transform: translateY(4px); box-shadow: 0 1px 0px #e08e9b; }
-
-        /* Decoração de Fundo */
-        .alga {
-            position: absolute;
-            bottom: 0;
-            width: 40px;
-            height: 100px;
-            background: #74c69d;
-            border-radius: 20px 20px 0 0;
-            animation: wave 3s infinite ease-in-out alternate;
-            transform-origin: bottom;
-        }
-
-        @keyframes wave { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+        #next-btn:hover { background-color: #ff98ab; }
+        #next-btn:active { transform: translateY(3px); box-shadow: 0 2px 0px #e08e9b; }
 
     </style>
 </head>
 <body>
 
     <div id="ocean-stage">
-        <div class="alga" style="left: 10%; height: 80px; background: #95d5b2;"></div>
-        <div class="alga" style="left: 85%; height: 120px;"></div>
+        <img src="alga.png" class="alga-custom" style="left: 5%; width: 50px;">
+        <img src="alga.png" class="alga-custom" style="left: 15%; width: 70px; animation-delay: 0.5s;">
+        <img src="alga.png" class="alga-custom" style="right: 10%; width: 60px; animation-delay: 1.2s;">
         
         <img id="pais" src="https://cdn-icons-png.flaticon.com/512/2271/2271068.png" alt="Pais">
         <img id="peixinho" src="https://cdn-icons-png.flaticon.com/512/2271/2271062.png" alt="Peixinho">
-        
-        </div>
-
-    <div id="narration-box">
-        Clique no botão para começar a história do Peixinho!
     </div>
 
-    <button id="next-btn" onclick="nextStep()">Começar Aventura ➔</button>
+    <div id="narration-box">
+        Era uma vez um peixinho muito curioso...
+    </div>
+
+    <button id="next-btn" onclick="nextStep()">Próxima página ➔</button>
 
     <script>
         let step = 0;
@@ -144,62 +146,57 @@
         const text = document.getElementById('narration-box');
         const stage = document.getElementById('ocean-stage');
 
-        // Criar bolhas aleatórias
-        for(let i=0; i<10; i++) {
+        // Gerador de bolhas lúdicas
+        setInterval(() => {
             let b = document.createElement('div');
             b.className = 'bubble';
             b.style.left = Math.random() * 100 + '%';
-            b.style.width = b.style.height = Math.random() * 20 + 10 + 'px';
-            b.style.animationDelay = Math.random() * 4 + 's';
+            b.style.bottom = "0px";
+            b.style.width = b.style.height = Math.random() * 15 + 10 + 'px';
             stage.appendChild(b);
-        }
+            setTimeout(() => b.remove(), 4000);
+        }, 800);
 
         const storySteps = [
             {
-                text: "Peixinho vivia com seus pais, mas eles estavam muito ocupados limpando a toca...",
+                text: "Peixinho queria muito brincar, mas o Papai e a Mamãe estavam ocupados arrumando a casinha.",
                 action: () => {
-                    pais.style.left = '50px';
+                    pais.style.left = '40px';
                     peixinho.style.left = '200px';
                 }
             },
             {
-                text: "O Peixinho decidiu nadar sozinho em busca de novas aventuras!",
+                text: "Então, ele resolveu dar uma voltinha sozinho para ver as cores do mar.",
                 action: () => {
-                    peixinho.style.left = '80%';
-                    pais.style.opacity = '0';
-                    stage.style.background = 'linear-gradient(180deg, #48cae4 0%, #0077b6 100%)';
+                    peixinho.style.left = '85%';
+                    pais.style.left = '-200px'; // Pais saem de cena
                 }
             },
             {
-                text: "Oh não! Ele nadou tanto que acabou se perdendo nas algas profundas...",
+                text: "O mar ficou mais escuro e o Peixinho percebeu que estava perdido. 'Onde está minha casinha?', pensou ele.",
                 action: () => {
-                    peixinho.style.top = '70%';
-                    peixinho.style.filter = 'grayscale(50%)';
-                    // Tremedeira de medo
-                    peixinho.animate([
-                        { transform: 'translateX(0)' },
-                        { transform: 'translateX(5px)' }
-                    ], { duration: 100, iterations: Infinity });
+                    stage.style.filter = "brightness(0.7) saturate(1.2)";
+                    peixinho.style.top = '75%';
                 }
             },
             {
-                text: "Mas olhe! Papai e Mamãe Peixe vieram nadando rápido para encontrá-lo!",
+                text: "De repente, ele ouviu vozes conhecidas... Eram seus pais que vieram correndo (ou melhor, nadando!)",
                 action: () => {
-                    pais.style.opacity = '1';
+                    stage.style.filter = "none";
                     pais.style.left = '60%';
                     pais.style.top = '65%';
+                    peixinho.style.left = '75%';
                 }
             },
             {
-                text: "Eles se encontraram! Agora, todos brincam juntos pelo caminho de volta.",
+                text: "Que alegria! Eles se encontraram e voltaram para casa brincando de pega-pega pelo caminho.",
                 action: () => {
-                    peixinho.style.filter = 'none';
-                    peixinho.style.left = '45%';
-                    peixinho.style.top = '45%';
-                    pais.style.left = '35%';
-                    stage.style.background = 'linear-gradient(180deg, #caf0f8 0%, #90e0ef 100%)';
-                    // Animação de alegria (pulo)
-                    peixinho.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-30px)' }], { duration: 500, iterations: 4 });
+                    peixinho.style.left = '35%';
+                    peixinho.style.top = '40%';
+                    pais.style.left = '20%';
+                    pais.style.top = '45%';
+                    // Animação final de pulo
+                    peixinho.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-20px)' }], { duration: 400, iterations: 5 });
                 }
             }
         ];
@@ -211,10 +208,10 @@
                 s.action();
                 step++;
                 if(step === storySteps.length) {
-                    document.getElementById('next-btn').innerText = "Ver de novo ↺";
+                    document.getElementById('next-btn').innerText = "Recomeçar ↺";
                 }
             } else {
-                location.reload(); // Reinicia
+                location.reload();
             }
         }
     </script>
