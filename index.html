@@ -3,189 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Peixinho Curioso - Livro 3D</title>
+    <title>O Peixinho Curioso - Livro Interativo</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
 
         :root {
-            --water-deep: #0077b6;
-            --water-light: #90e0ef;
             --paper-color: #fdfaf0;
+            --cover-color: #5d2e0a;
+            --width: 400px; /* Largura de UMA página */
+            --height: 550px; /* Altura do livro */
         }
 
-        /* Fundo do Mar Animado */
         body {
             margin: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(180deg, var(--water-light), var(--water-deep));
-            background-size: 400% 400%;
-            animation: oceanGradient 15s ease infinite;
+            background: radial-gradient(circle, #90e0ef 0%, #0077b6 100%);
             font-family: 'Bubblegum Sans', cursive;
-            overflow: hidden;
         }
 
-        @keyframes oceanGradient { 0%, 100% { background-position: 50% 0%; } 50% { background-position: 50% 100%; } }
-
-        /* Estrutura do Livro baseada no seu CSS */
+        /* O Livro */
         .book {
-            perspective: 250vw;
-            z-index: 10;
-        }
-
-        .book .pages {
-            width: 60vw;
-            height: 44vw;
+            width: calc(var(--width) * 2);
+            height: var(--height);
             position: relative;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
-            border-radius: 4px;
+            perspective: 1500px;
+            transition: transform 0.5s;
         }
 
-        .book .page {
+        /* As Folhas */
+        .page {
+            width: var(--width);
+            height: var(--height);
             position: absolute;
             top: 0;
-            width: 30vw;
-            height: 44vw;
-            transform-origin: 0 0;
-            transition: transform 1.4s;
-            backface-visibility: hidden;
+            right: 0;
+            transform-origin: left;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
+            z-index: 1;
             cursor: pointer;
-            user-select: none;
+        }
+
+        /* Lado da Frente da Folha */
+        .front, .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            backface-visibility: hidden;
             background-color: var(--paper-color);
-            padding: 2vw;
+            padding: 30px;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             box-shadow: inset 3px 0px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* Lado Direito (Ímpar) */
-        .book .page:nth-child(odd) {
-            pointer-events: all;
-            transform: rotateY(0deg);
-            right: 0;
-            border-radius: 0 4px 4px 0;
-            background-image: linear-gradient(to right, rgba(0,0,0,.1) 0%, rgba(0,0,0,0) 10%);
-        }
-
-        /* Lado Esquerdo (Par - Verso) */
-        .book .page:nth-child(even) {
-            pointer-events: none;
+        /* Lado de Trás da Folha */
+        .back {
             transform: rotateY(180deg);
-            transform-origin: 100% 0;
-            left: 0;
-            border-radius: 4px 0 0 4px;
-            background-image: linear-gradient(to left, rgba(0,0,0,.1) 0%, rgba(0,0,0,0) 10%);
+            background-color: #f9f4e8;
         }
 
-        /* Virada de página */
-        .book .page.flipped:nth-child(odd) {
-            pointer-events: none;
-            transform: rotateY(-180deg);
-        }
-
-        .book .page.flipped:nth-child(even) {
-            pointer-events: all;
-            transform: rotateY(0deg);
-        }
-
-        /* Conteúdo das páginas */
+        /* Imagem e Texto */
         .page img {
-            width: 90%;
-            height: auto;
-            border-radius: 10px;
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
         .page p {
-            font-size: 1.8vw;
+            font-size: 1.5rem;
             color: #333;
             text-align: center;
-            margin-top: 1.5vw;
+            line-height: 1.4;
         }
 
-        .capa {
-            background-color: #5d2e0a !important;
-            color: white !important;
+        /* Estado: Página Virada */
+        .page.flipped {
+            transform: rotateY(-180deg);
+            z-index: 2;
         }
 
-        .capa h1 { font-size: 4vw; text-align: center; }
+        /* Estilo da Capa */
+        .cover {
+            background-color: var(--cover-color) !important;
+            color: white;
+            border-radius: 0 10px 10px 0 !important;
+        }
+
+        .cover h1 { font-size: 3rem; text-shadow: 2px 2px #000; }
 
         /* Balão de fala */
         .balao {
             background: white;
-            border: 2px solid #333;
+            border: 2px solid #000;
             border-radius: 15px;
-            padding: 5px 10px;
-            font-size: 1.2vw;
+            padding: 5px 15px;
             position: absolute;
-            top: 20%;
-            left: 10%;
+            top: 10%;
+            left: 20%;
+            color: black;
+            font-size: 1.2rem;
         }
 
+        /* Bolhas decorativas no fundo do mar */
+        .bg-bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="book">
-        <div class="pages">
-            
-            <div class="page capa">
+    <div class="bg-bubbles" id="bubbles"></div>
+
+    <div class="book" id="book">
+        
+        <div class="page" style="z-index: 5;" onclick="flip(this)">
+            <div class="front cover">
                 <h1>O Peixinho Curioso</h1>
-                <p>Clique para abrir</p>
+                <p>Clique para abrir ➔</p>
             </div>
-
-            <div class="page">
-                <p>Era uma vez no fundo do mar...</p>
+            <div class="back">
+                <p>O Peixinho vivia no fundo do mar...</p>
+                <img src="peixinho.png" alt="Peixinho">
             </div>
-
-            <div class="page">
-                <div style="position: relative;">
-                    <div class="balao">Agora não...</div>
-                    <img src="peixinho.png" style="width: 100px; filter: hue-rotate(40deg);">
-                </div>
-                <p>O Papai e a Mamãe estavam muito ocupados limpando a casa.</p>
-            </div>
-
-            <div class="page">
-                <img src="peixinho.png" style="width: 80px;">
-                <p>Então o Peixinho resolveu explorar o oceano sozinho!</p>
-            </div>
-
-            <div class="page">
-                <img src="cenario.png" style="filter: brightness(0.5);">
-                <p>Mas ele nadou tanto que acabou se perdendo...</p>
-            </div>
-
-            <div class="page">
-                <img src="peixinho.png" style="width: 120px;">
-                <p>Ainda bem que seus pais o encontraram e eles voltaram felizes!</p>
-            </div>
-
         </div>
+
+        <div class="page" style="z-index: 4;" onclick="flip(this)">
+            <div class="front">
+                <div class="balao">Agora não...</div>
+                <img src="peixinho.png" style="filter: hue-rotate(50deg);">
+                <p>Papai e Mamãe estavam cuidando da toca.</p>
+            </div>
+            <div class="back">
+                <p>Peixinho decidiu nadar para longe...</p>
+                <img src="alga.png">
+            </div>
+        </div>
+
+        <div class="page" style="z-index: 3;" onclick="flip(this)">
+            <div class="front" style="background-image: url('cenario.png'); background-size: cover;">
+                <p style="background: white; padding: 10px; border-radius: 10px;">Ele se perdeu no mar azul profundo!</p>
+            </div>
+            <div class="back">
+                <p>Mas seus pais logo apareceram para resgatá-lo.</p>
+                <img src="peixinho.png">
+            </div>
+        </div>
+
+        <div class="page" style="z-index: 2;" onclick="flip(this)">
+            <div class="front">
+                <h1>FIM!</h1>
+                <p>Agora eles brincam juntos todos os dias.</p>
+                <img src="peixinho.png">
+            </div>
+            <div class="back cover">
+                <h1>Voltar ao início?</h1>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Lógica para virar as páginas ao clicar
-        const pages = document.querySelectorAll('.page');
-        
-        pages.forEach((page, index) => {
-            page.onclick = function() {
-                if (index % 2 === 0) {
-                    // Se clicar na página par (esquerda), vira ela e a anterior de volta
-                    this.classList.remove('flipped');
-                    this.nextElementSibling.classList.remove('flipped');
-                } else {
-                    // Se clicar na página ímpar (direita), vira ela e a próxima
-                    this.classList.add('flipped');
-                    this.previousElementSibling.classList.add('flipped');
-                }
+        // Função para virar as páginas
+        function flip(element) {
+            element.classList.toggle('flipped');
+            
+            // Ajuste de Z-Index para que as páginas não fiquem por baixo
+            if (element.classList.contains('flipped')) {
+                setTimeout(() => {
+                    element.style.zIndex = 10;
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    // Retorna ao z-index original baseado na ordem (precisa ser manual aqui)
+                    if (element.contains(document.querySelector('h1'))) element.style.zIndex = 5;
+                }, 500);
             }
-        });
+        }
+
+        // Criar bolhas no fundo do mar
+        const bubblesContainer = document.getElementById('bubbles');
+        for (let i = 0; i < 20; i++) {
+            const bubble = document.createElement('div');
+            bubble.style.position = 'absolute';
+            bubble.style.background = 'rgba(255,255,255,0.3)';
+            bubble.style.borderRadius = '50%';
+            bubble.style.width = bubble.style.height = Math.random() * 20 + 10 + 'px';
+            bubble.style.left = Math.random() * 100 + 'vw';
+            bubble.style.bottom = '-50px';
+            bubble.style.animation = `rise ${Math.random() * 5 + 5}s infinite linear`;
+            bubblesContainer.appendChild(bubble);
+        }
+
+        // Estilo da animação das bolhas
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes rise { to { transform: translateY(-110vh); opacity: 0; } }`;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
