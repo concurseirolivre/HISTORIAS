@@ -9,7 +9,7 @@
 
         :root {
             --water-bg: #a2d2ff;
-            --coral: #ffafbd;
+            --coral-btn: #ffafbd;
             --text-color: #444;
         }
 
@@ -25,12 +25,12 @@
             overflow: hidden;
         }
 
-        /* Palco com sua imagem de cenário personalizada */
+        /* Palco com seu cenário personalizado */
         #ocean-stage {
             width: 90vw;
             height: 60vh;
             max-width: 800px;
-            background-image: url('cenario.png'); /* Seu arquivo do GitHub */
+            background-image: url('cenario.png'); 
             background-size: cover;
             background-position: center;
             border: 8px solid white;
@@ -40,11 +40,11 @@
             overflow: hidden;
         }
 
-        /* Algas usando seu arquivo alga.png */
+        /* Suas algas personalizadas */
         .alga-custom {
             position: absolute;
             bottom: -5px;
-            width: 60px; /* Ajuste conforme o tamanho da sua arte */
+            width: 60px;
             height: auto;
             animation: wave 3s infinite ease-in-out alternate;
             transform-origin: bottom;
@@ -52,26 +52,13 @@
         }
 
         @keyframes wave { 
-            from { transform: rotate(-3deg) scale(1); } 
-            to { transform: rotate(3deg) scale(1.05); } 
+            from { transform: rotate(-4deg); } 
+            to { transform: rotate(4deg); } 
         }
 
-        /* Bolhas */
-        .bubble {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            animation: rise 4s infinite ease-in;
-            z-index: 2;
-        }
-
-        @keyframes rise {
-            0% { transform: translateY(100%) scale(0.5); opacity: 0; }
-            100% { transform: translateY(-300px) scale(1.2); opacity: 0; }
-        }
-
+        /* O Peixinho principal */
         #peixinho {
-            width: 80px;
+            width: 80px; /* Ajuste o tamanho se necessário */
             position: absolute;
             top: 50%;
             left: 10%;
@@ -79,14 +66,33 @@
             z-index: 10;
         }
 
-        #pais {
-            width: 120px;
+        /* Os Pais (Usando a mesma imagem do peixinho, mas maior) */
+        .pais-container {
             position: absolute;
             top: 45%;
-            left: -200px;
+            left: -250px;
             transition: all 2s ease-in-out;
-            opacity: 0.8;
+            display: flex;
+            gap: 10px;
+            opacity: 0.9;
             z-index: 9;
+        }
+
+        .pai-img { width: 110px; filter: hue-rotate(30deg); } /* Diferencia um pouco a cor dos pais */
+        .mae-img { width: 100px; filter: hue-rotate(-30deg); }
+
+        /* Bolhas */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: rise 4s infinite ease-in;
+            z-index: 2;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(100%) scale(0.5); opacity: 0; }
+            100% { transform: translateY(-400px) scale(1.2); opacity: 0; }
         }
 
         #narration-box {
@@ -97,18 +103,18 @@
             border-radius: 25px;
             margin-top: 25px;
             text-align: center;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: var(--text-color);
             box-shadow: 0 8px 0px #cbd5e0;
-            min-height: 60px;
+            min-height: 70px;
         }
 
         #next-btn {
             margin-top: 20px;
-            padding: 12px 35px;
-            font-size: 1.2rem;
+            padding: 15px 40px;
+            font-size: 1.3rem;
             font-family: 'Bubblegum Sans', cursive;
-            background-color: var(--coral);
+            background-color: var(--coral-btn);
             border: none;
             border-radius: 50px;
             color: white;
@@ -117,7 +123,6 @@
             transition: 0.2s;
         }
 
-        #next-btn:hover { background-color: #ff98ab; }
         #next-btn:active { transform: translateY(3px); box-shadow: 0 2px 0px #e08e9b; }
 
     </style>
@@ -125,19 +130,23 @@
 <body>
 
     <div id="ocean-stage">
-        <img src="alga.png" class="alga-custom" style="left: 5%; width: 50px;">
-        <img src="alga.png" class="alga-custom" style="left: 15%; width: 70px; animation-delay: 0.5s;">
-        <img src="alga.png" class="alga-custom" style="right: 10%; width: 60px; animation-delay: 1.2s;">
+        <img src="alga.png" class="alga-custom" style="left: 8%;">
+        <img src="alga.png" class="alga-custom" style="left: 20%; width: 45px; animation-delay: 0.5s;">
+        <img src="alga.png" class="alga-custom" style="right: 15%; animation-delay: 1s;">
+
+        <div id="pais" class="pais-container">
+            <img src="peixinho.png" class="pai-img" alt="Papai">
+            <img src="peixinho.png" class="mae-img" alt="Mamãe">
+        </div>
         
-        <img id="pais" src="https://cdn-icons-png.flaticon.com/512/2271/2271068.png" alt="Pais">
-        <img id="peixinho" src="https://cdn-icons-png.flaticon.com/512/2271/2271062.png" alt="Peixinho">
+        <img id="peixinho" src="peixinho.png" alt="Peixinho">
     </div>
 
     <div id="narration-box">
-        Era uma vez um peixinho muito curioso...
+        Clique para começar a história do Peixinho Curioso!
     </div>
 
-    <button id="next-btn" onclick="nextStep()">Próxima página ➔</button>
+    <button id="next-btn" onclick="nextStep()">Avançar ➔</button>
 
     <script>
         let step = 0;
@@ -146,57 +155,57 @@
         const text = document.getElementById('narration-box');
         const stage = document.getElementById('ocean-stage');
 
-        // Gerador de bolhas lúdicas
+        // Gerador de bolhas
         setInterval(() => {
             let b = document.createElement('div');
             b.className = 'bubble';
             b.style.left = Math.random() * 100 + '%';
-            b.style.bottom = "0px";
-            b.style.width = b.style.height = Math.random() * 15 + 10 + 'px';
+            b.style.bottom = "-20px";
+            b.style.width = b.style.height = Math.random() * 20 + 10 + 'px';
             stage.appendChild(b);
             setTimeout(() => b.remove(), 4000);
-        }, 800);
+        }, 1000);
 
         const storySteps = [
             {
-                text: "Peixinho queria muito brincar, mas o Papai e a Mamãe estavam ocupados arrumando a casinha.",
+                text: "O Peixinho queria muito brincar, mas o Papai e a Mamãe estavam cuidando da casa.",
                 action: () => {
-                    pais.style.left = '40px';
-                    peixinho.style.left = '200px';
+                    pais.style.left = '30px';
+                    peixinho.style.left = '250px';
                 }
             },
             {
-                text: "Então, ele resolveu dar uma voltinha sozinho para ver as cores do mar.",
+                text: "Então, ele decidiu explorar o oceano sozinho. 'Que aventura!', pensou ele.",
                 action: () => {
                     peixinho.style.left = '85%';
-                    pais.style.left = '-200px'; // Pais saem de cena
+                    pais.style.left = '-300px'; 
                 }
             },
             {
-                text: "O mar ficou mais escuro e o Peixinho percebeu que estava perdido. 'Onde está minha casinha?', pensou ele.",
+                text: "Mas as águas ficaram fundas e ele se perdeu. O Peixinho começou a sentir saudades...",
                 action: () => {
-                    stage.style.filter = "brightness(0.7) saturate(1.2)";
-                    peixinho.style.top = '75%';
+                    stage.style.filter = "brightness(0.6) saturate(1.2)";
+                    peixinho.style.top = '70%';
+                    peixinho.style.transform = 'scaleX(-1)'; // Vira para o outro lado
                 }
             },
             {
-                text: "De repente, ele ouviu vozes conhecidas... Eram seus pais que vieram correndo (ou melhor, nadando!)",
+                text: "De repente, lá longe, ele viu seus pais vindo procurá-lo!",
                 action: () => {
                     stage.style.filter = "none";
-                    pais.style.left = '60%';
-                    pais.style.top = '65%';
-                    peixinho.style.left = '75%';
+                    pais.style.left = '50%';
+                    pais.style.top = '60%';
+                    peixinho.style.transform = 'scaleX(1)';
+                    peixinho.style.left = '70%';
                 }
             },
             {
-                text: "Que alegria! Eles se encontraram e voltaram para casa brincando de pega-pega pelo caminho.",
+                text: "Que felicidade! Agora eles brincam juntos e nunca mais o Peixinho se perdeu.",
                 action: () => {
-                    peixinho.style.left = '35%';
+                    peixinho.style.left = '40%';
                     peixinho.style.top = '40%';
-                    pais.style.left = '20%';
-                    pais.style.top = '45%';
-                    // Animação final de pulo
-                    peixinho.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-20px)' }], { duration: 400, iterations: 5 });
+                    pais.style.left = '15%';
+                    peixinho.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-30px)' }], { duration: 500, iterations: 6 });
                 }
             }
         ];
@@ -207,9 +216,7 @@
                 text.innerText = s.text;
                 s.action();
                 step++;
-                if(step === storySteps.length) {
-                    document.getElementById('next-btn').innerText = "Recomeçar ↺";
-                }
+                if(step === storySteps.length) document.getElementById('next-btn').innerText = "Fim! ↺";
             } else {
                 location.reload();
             }
