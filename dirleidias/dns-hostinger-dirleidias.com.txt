@@ -1,0 +1,24 @@
+; Zone file for dirleidias.com — configurado para GitHub Pages
+; Substitui o registro A de estacionamento (2.57.91.91) da Hostinger
+
+$ORIGIN dirleidias.com.
+$TTL 3600
+
+@     3600  IN SOA   nova.dns-parking.com. dns.hostinger.com. 2026112003 10000 2400 604800 600
+@     86400 IN NS    cosmos.dns-parking.com.
+@     86400 IN NS    nova.dns-parking.com.
+
+; GitHub Pages (IPv4)
+@     3600  IN A     185.199.108.153
+@     3600  IN A     185.199.109.153
+@     3600  IN A     185.199.110.153
+@     3600  IN A     185.199.111.153
+
+; GitHub Pages (IPv6)
+@     3600  IN AAAA  2606:50c0:8000::153
+@     3600  IN AAAA  2606:50c0:8001::153
+@     3600  IN AAAA  2606:50c0:8002::153
+@     3600  IN AAAA  2606:50c0:8003::153
+
+; www aponta para o GitHub Pages da conta
+www   3600  IN CNAME concurseirolivre.github.io.
