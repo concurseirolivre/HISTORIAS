@@ -23,11 +23,9 @@ dirleidias/
 
 Fontes: Instrument Serif (títulos), Work Sans (texto), Caveat (manuscrita).
 
-## Como adicionar um livro / infoproduto
-Na seção `id="livros"` do `index.html`, copie um bloco `<article class="product">` e altere:
-- cor da capa: `book navy`, `book green` ou `book gold` (ou troque a `<div class="book">` por uma `<img>` da capa real);
-- etiqueta `Em breve` → `Disponível`;
-- título, descrição e o `href` do botão (link da Hotmart, Kiwify, Amazon etc.).
+## Livros e materiais
+A seção `id="livros"` está como "Em breve", com o botão "Quero ser avisado" (WhatsApp).
+Quando houver um produto, basta pedir ao Claude para criar os cartões com capa, descrição e link de venda (Hotmart, Kiwify, Amazon etc.).
 
 ## Publicar com o domínio dirleidias.com
 Opção recomendada (grátis): **Netlify** ou **Cloudflare Pages**
