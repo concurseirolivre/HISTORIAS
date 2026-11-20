@@ -479,7 +479,7 @@ section { position: relative; }
   .hero .container, .about .container, .tcc .container, .faq .container, .cta .container { grid-template-columns: 1fr; }
   .hero-visual { justify-self: center; width: min(86%, 420px); margin-top: 20px; }
   .hero-card { left: -20px; bottom: 26px; }
-  .hero-tag { right: -10px; }
+  .hero-tag { top: -22px; right: -6px; font-size: 22px; transform: rotate(5deg); }
   .section-head { grid-template-columns: 1fr; gap: 20px; margin-bottom: 44px; }
   .about-visual { max-width: 440px; }
   .about-visual .stamp { right: -10px; top: -24px; width: 104px; height: 104px; }
@@ -507,4 +507,9 @@ section { position: relative; }
   .reveal, .fade-up { opacity: 1; transform: none; }
   .reveal-img { clip-path: none; }
   html { scroll-behavior: auto; }
+}
+
+@media (max-width: 400px) {
+  .brand-sub { letter-spacing: .1em; white-space: nowrap; font-size: 9px; }
+  .brand-name { font-size: 22px; }
 }
